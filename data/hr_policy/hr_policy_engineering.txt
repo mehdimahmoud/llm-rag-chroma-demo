@@ -1,0 +1,8 @@
+Engineering Department HR Policy
+==============================
+
+1. Vacation Policy: Engineering staff are entitled to 25 days of paid vacation per year.
+2. On-call Rotation: Engineers participate in an on-call rotation and receive additional compensation.
+3. Training: Engineers are eligible for up to $2,000 per year in professional development reimbursement.
+4. Remote Work: Engineering staff may work remotely up to 3 days per week.
+5. Equipment: The company provides high-performance laptops and monitors for all engineers. 

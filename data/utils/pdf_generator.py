@@ -89,7 +89,7 @@ class PDFGenerator:
         Returns:
             Path to the merged PDF file
         """
-        # This is a placeholder - would need PyPDF2 or similar for actual merging
+        # This is a placeholder - would need pypdf or similar for actual merging
         # For now, just return the first file as an example
         if input_files:
             return input_files[0]

@@ -1,0 +1,2 @@
+This is a test document for menu functionality testing.
+It contains multiple lines of text to test text extraction.

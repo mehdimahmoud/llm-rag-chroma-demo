@@ -260,8 +260,8 @@ import structlog
 
 # Structured logging with correlation IDs
 logger = structlog.get_logger(__name__)
-logger.info("Processing document", 
-           document_id="doc_123", 
+logger.info("Processing document",
+           document_id="doc_123",
            file_type="pdf",
            chunk_count=15)
 ```
@@ -338,4 +338,4 @@ For support and questions:
 
 ---
 
-**Built with ❤️ for production AI applications** 
+**Built with ❤️ for production AI applications**

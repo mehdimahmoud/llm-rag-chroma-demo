@@ -105,4 +105,4 @@ git checkout -b feature/your-feature-name
 
 ---
 
-Thank you for helping make this project better! 
+Thank you for helping make this project better!

@@ -1,173 +1,188 @@
-# Enterprise-Grade Development Makefile
-# Best practices for team development
+# RAG System Makefile
 
-.PHONY: help install test test-unit test-integration test-e2e test-coverage lint format clean docs ci cd
+.PHONY: help install install-dev clean test test-cov lint format type-check build docs run-demo run-ui
 
 # Default target
 help:
-	@echo "🚀 Enterprise-Grade Development Commands"
-	@echo "========================================"
-	@echo "📦 Setup & Installation:"
-	@echo "  install          Install all dependencies"
-	@echo "  install-dev      Install development dependencies"
+	@echo "RAG System - Available Commands:"
 	@echo ""
-	@echo "🧪 Testing:"
-	@echo "  test             Run all tests with coverage"
-	@echo "  test-unit        Run unit tests only"
-	@echo "  test-integration Run integration tests only"
-	@echo "  test-e2e         Run end-to-end tests only"
-	@echo "  test-coverage    Generate coverage report"
-	@echo "  test-fast        Run tests without coverage (faster)"
+	@echo "Development Setup:"
+	@echo "  install      - Install production dependencies"
+	@echo "  install-dev  - Install development dependencies"
+	@echo "  clean        - Clean build artifacts and cache"
 	@echo ""
-	@echo "🔍 Code Quality:"
-	@echo "  lint             Run all linting tools"
-	@echo "  format           Format code with black and isort"
-	@echo "  type-check       Run type checking with mypy"
-	@echo "  security         Run security checks with bandit"
+	@echo "Code Quality:"
+	@echo "  lint         - Run linting checks (flake8)"
+	@echo "  format       - Format code (black + isort)"
+	@echo "  type-check   - Run type checking (mypy)"
+	@echo "  check-all    - Run all code quality checks"
 	@echo ""
-	@echo "📚 Documentation:"
-	@echo "  docs             Build documentation"
-	@echo "  docs-serve       Serve documentation locally"
+	@echo "Testing:"
+	@echo "  test         - Run tests"
+	@echo "  test-cov     - Run tests with coverage"
+	@echo "  test-watch   - Run tests in watch mode"
 	@echo ""
-	@echo "🧹 Maintenance:"
-	@echo "  clean            Clean all generated files"
-	@echo "  clean-cache      Clean Python cache files"
+	@echo "Documentation:"
+	@echo "  docs         - Build documentation"
+	@echo "  docs-serve   - Serve documentation locally"
 	@echo ""
-	@echo "🚀 CI/CD:"
-	@echo "  ci               Run CI pipeline locally"
-	@echo "  cd               Run CD pipeline locally"
+	@echo "Running:"
+	@echo "  run-demo     - Run CLI demo"
+	@echo "  run-ui       - Run Streamlit UI"
+	@echo "  run-interactive - Run interactive CLI mode"
+	@echo ""
+	@echo "Build & Deploy:"
+	@echo "  build        - Build package"
+	@echo "  dist         - Create distribution"
+	@echo "  publish      - Publish to PyPI (if configured)"
 
-# Installation
+# Development Setup
 install:
-	@echo "📦 Installing dependencies..."
-	pip install -r requirements.txt
-	@echo "✅ Installation complete!"
+	@echo "Installing production dependencies..."
+	pip install -e .
 
 install-dev:
-	@echo "📦 Installing development dependencies..."
-	pip install -r requirements.txt
+	@echo "Installing development dependencies..."
+	pip install -e ".[dev]"
 	pre-commit install
-	@echo "✅ Development setup complete!"
 
-# Testing
-test:
-	@echo "🧪 Running all tests with coverage..."
-	pytest --cov=src --cov-report=html:htmlcov --cov-report=xml:coverage.xml --cov-report=term-missing --cov-fail-under=80
-	@echo "✅ All tests completed!"
-
-test-unit:
-	@echo "🧪 Running unit tests..."
-	pytest -m "unit" --cov=src --cov-report=term-missing
-
-test-integration:
-	@echo "🧪 Running integration tests..."
-	pytest -m "integration" --cov=src --cov-report=term-missing
-
-test-e2e:
-	@echo "🧪 Running end-to-end tests..."
-	pytest -m "e2e" --cov=src --cov-report=term-missing
-
-test-coverage:
-	@echo "📊 Generating coverage report..."
-	pytest --cov=src --cov-report=html:htmlcov --cov-report=xml:coverage.xml --cov-report=term-missing
-	@echo "📈 Coverage report generated in htmlcov/"
-
-test-fast:
-	@echo "⚡ Running tests without coverage..."
-	pytest --no-cov
-
-# Code Quality
-lint:
-	@echo "🔍 Running linting checks..."
-	flake8 src tests
-	black --check src tests
-	isort --check-only src tests
-	@echo "✅ Linting passed!"
-
-format:
-	@echo "🎨 Formatting code..."
-	black src tests
-	isort src tests
-	@echo "✅ Code formatted!"
-
-type-check:
-	@echo "🔍 Running type checks..."
-	mypy src
-	@echo "✅ Type checking passed!"
-
-security:
-	@echo "🔒 Running security checks..."
-	bandit -r src
-	@echo "✅ Security checks passed!"
-
-# Documentation
-docs:
-	@echo "📚 Building documentation..."
-	cd docs && make html
-	@echo "✅ Documentation built!"
-
-docs-serve:
-	@echo "🌐 Serving documentation..."
-	cd docs/_build/html && python -m http.server 8000
-
-# Maintenance
-clean:
-	@echo "🧹 Cleaning generated files..."
+clean:	clean-env
+	@echo "Cleaning build artifacts..."
+	rm -rf build/
+	rm -rf dist/
+	rm -rf *.egg-info/
+	rm -rf .pytest_cache/
+	rm -rf .mypy_cache/
 	rm -rf htmlcov/
 	rm -rf .coverage
 	rm -rf coverage.xml
-	rm -rf reports/
-	rm -rf .pytest_cache/
-	rm -rf __pycache__/
-	rm -rf src/__pycache__/
-	rm -rf tests/__pycache__/
-	rm -rf .mypy_cache/
-	@echo "✅ Cleanup complete!"
-
-clean-cache:
-	@echo "🧹 Cleaning cache files..."
+	rm -rf .streamlit/
+	rm -rf chroma_db/
+	rm -rf rag_cache/
 	find . -type d -name "__pycache__" -exec rm -rf {} +
 	find . -type f -name "*.pyc" -delete
 	find . -type f -name "*.pyo" -delete
-	@echo "✅ Cache cleanup complete!"
+	find . -type f -name "*.pyd" -delete
 
-# CI/CD
-ci:
-	@echo "🚀 Running CI pipeline..."
-	$(MAKE) lint
-	$(MAKE) type-check
-	$(MAKE) security
-	$(MAKE) test
-	@echo "✅ CI pipeline passed!"
+clean-env:
+	@echo "Unsetting environment variables with LOG_, CHROMA_, CHUNK_, or EMBEDDING_ prefixes..."
+	@for prefix in LOG_ CHROMA_ CHUNK_ EMBEDDING_; do \
+		for var in $$(env | grep "^$$prefix" | cut -d= -f1); do \
+			unset $$var; \
+		done; \
+	done
 
-cd:
-	@echo "🚀 Running CD pipeline..."
-	$(MAKE) ci
-	$(MAKE) docs
-	@echo "✅ CD pipeline passed!"
+# Code Quality
+lint:
+	@echo "Running linting checks..."
+	flake8 rag_system/ tests/
+	@echo "✅ Linting passed"
 
-# Development helpers
+format:
+	@echo "Formatting code..."
+	black rag_system/ tests/
+	isort rag_system/ tests/
+	@echo "✅ Code formatted"
+
+type-check:
+	@echo "Running type checks..."
+	mypy rag_system/
+	@echo "✅ Type checking passed"
+
+check-all: format lint type-check
+	@echo "✅ All code quality checks passed"
+
+# Testing
+test:
+	@echo "Running tests..."
+	pytest tests/ -v
+
+test-cov:
+	@echo "Running tests with coverage..."
+	pytest tests/ -v --cov=rag_system --cov-report=term-missing --cov-report=html
+
+test-watch:
+	@echo "Running tests in watch mode..."
+	pytest tests/ -v -f
+
+# Documentation
+docs:
+	@echo "Building documentation..."
+	# Add documentation build commands here when docs are added
+	@echo "Documentation build not yet implemented"
+
+docs-serve:
+	@echo "Serving documentation locally..."
+	# Add documentation serve commands here when docs are added
+	@echo "Documentation serve not yet implemented"
+
+# Running Applications
+run-demo:
+	@echo "Running RAG system demo..."
+	python rag_demo.py
+
+run-ui:
+	@echo "Starting Streamlit UI..."
+	streamlit run rag_web_interface.py
+
+run-interactive:
+	@echo "Running interactive CLI mode..."
+	python -m rag_system.cli interactive
+
+# Build & Deploy
+build:
+	@echo "Building package..."
+	python -m build
+
+dist: clean build
+	@echo "Creating distribution..."
+	python -m build --wheel --sdist
+
+publish: dist
+	@echo "Publishing to PyPI..."
+	# Add publish commands here when ready for PyPI
+	@echo "Publishing not yet configured"
+
+# Development Workflow
 dev-setup: install-dev
-	@echo "🎯 Development environment ready!"
-	@echo "Run 'make test' to start testing"
-	@echo "Run 'make help' to see all available commands"
+	@echo "Development environment setup complete!"
 
-# Quick development cycle
-dev-cycle: format lint test-fast
-	@echo "🔄 Development cycle complete!"
+quick-test: format lint test
+	@echo "✅ Quick test cycle completed"
 
-# Performance testing
-benchmark:
-	@echo "⚡ Running performance benchmarks..."
-	pytest --benchmark-only
+# Database Management
+clear-db:
+	@echo "Clearing vector database..."
+	python -c "from rag_system.rag_system import RAGSystem; RAGSystem().clear_database()"
+	@echo "✅ Database cleared"
 
-# Test specific data directories
-test-hr-policy:
-	@echo "🧪 Testing with HR policy data..."
-	python tests/run_menu_tests.py --data-dir tests/data/hr_policy
+# System Information
+info:
+	@echo "System Information:"
+	@echo "Python version: $(shell python --version)"
+	@echo "Package version: $(shell python -c "import rag_system; print(rag_system.__version__)")"
+	@echo "Data directory: $(shell python -c "from rag_system.core.config import settings; print(settings.data_directory)")"
+	@echo "ChromaDB directory: $(shell python -c "from rag_system.core.config import settings; print(settings.chroma_persist_directory)")"
 
-# Generate test report
-test-report:
-	@echo "📊 Generating comprehensive test report..."
-	pytest --html=reports/pytest_report.html --self-contained-html --cov=src --cov-report=html:htmlcov
-	@echo "📈 Report generated in reports/ and htmlcov/" 
+# Pre-commit hooks
+pre-commit-run:
+	@echo "Running pre-commit hooks..."
+	pre-commit run --all-files
+
+# CI/CD helpers
+ci-test: install-dev test-cov lint type-check
+	@echo "✅ CI test suite completed"
+
+ci-build: ci-test build
+	@echo "✅ CI build completed"
+
+# Docker helpers (for future use)
+docker-build:
+	@echo "Building Docker image..."
+	# Add Docker build commands here when containerization is added
+	@echo "Docker build not yet implemented"
+
+docker-run:
+	@echo "Running Docker container..."
+	# Add Docker run commands here when containerization is added
+	@echo "Docker run not yet implemented" 

@@ -25,6 +25,7 @@ MANIFEST
 # Virtual environments
 venv/
 venv310/
+venv312/
 env/
 ENV/
 env.bak/
@@ -113,3 +114,6 @@ dmypy.json
 vector_store/
 embeddings_cache/
 document_cache/
+
+# build artifacts
+=*

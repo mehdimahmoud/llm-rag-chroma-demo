@@ -1,3 +1,0 @@
-"""
-Generic menu commands.
-"""

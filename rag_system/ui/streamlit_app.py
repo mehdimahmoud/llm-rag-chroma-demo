@@ -10,12 +10,14 @@ from pathlib import Path
 
 import streamlit as st
 
-from ..core.config import settings
+from ..core.config import Settings
 from ..core.logging import get_logger, setup_logging
 from ..rag_system import RAGSystem
 
 # from typing import List, Optional
 
+# Settings
+settings = Settings()
 
 # Setup logging
 setup_logging(log_level="INFO", log_format="text")
@@ -23,7 +25,8 @@ logger = get_logger(__name__)
 
 
 def main() -> None:
-    """Main Streamlit application."""
+    """Main Streamlit application."""    
+    setup_logging(log_level=settings.log_level, log_format=settings.log_format)
     st.set_page_config(
         page_title="RAG System",
         page_icon="🤖",
@@ -46,7 +49,7 @@ def main() -> None:
         if st.button("🔄 Initialize System"):
             with st.spinner("Initializing RAG system..."):
                 try:
-                    st.session_state.rag_system = RAGSystem()
+                    st.session_state.rag_system = RAGSystem(settings=settings)
                     st.session_state.initialized = True
                     st.success("System initialized successfully!")
                 except Exception as e:

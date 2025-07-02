@@ -9,7 +9,7 @@ import argparse
 import sys
 from pathlib import Path
 
-# from .core.config import settings
+from .core.config import Settings
 from .core.logging import get_logger, setup_logging
 from .rag_system import RAGSystem
 
@@ -288,16 +288,17 @@ def main() -> None:
     parser = create_parser()
     args = parser.parse_args()
 
-    # Setup logging
-    setup_logging(log_level=args.log_level, log_format=args.log_format)
+    # Instantiate settings and setup logging
+    settings = Settings()
+    setup_logging(log_level=settings.log_level, log_format=settings.log_format)
 
     if not args.command:
         parser.print_help()
         sys.exit(1)
 
     try:
-        # Initialize RAG system
-        rag_system = RAGSystem()
+        # Initialize RAG system with settings
+        rag_system = RAGSystem(settings=settings)
 
         # Handle commands
         if args.command == "ingest":

@@ -94,17 +94,7 @@ make install-dev
 
 ### Environment Variables
 
-```bash
-# Set environment variables
-export APP_NAME="My RAG System"
-export DEBUG=true
-export CHUNK_SIZE=1000
-export CHUNK_OVERLAP=200
-export EMBEDDING_MODEL_NAME="all-MiniLM-L6-v2"
-export LOG_LEVEL="INFO"
-```
-
-### Or create a `.env` file
+Create a `.env` file in the project root:
 
 ```env
 APP_NAME=My RAG System

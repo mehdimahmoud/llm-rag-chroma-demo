@@ -6,104 +6,63 @@ with environment variable support and validation.
 """
 
 from pathlib import Path
-from typing import List, Optional
+from typing import Annotated
 
 from pydantic import Field, field_validator
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
     """Application settings with environment variable support."""
 
+    model_config = SettingsConfigDict(env_file='.env', populate_by_name=True, frozen=True)
+
     # Application settings
-    app_name: str = Field(default="RAG System", description="Application name")
-    app_version: str = Field(
-        default="1.0.0",
-        description="Application version",
-    )
-    debug: bool = Field(default=False, description="Enable debug mode")
+    app_name: Annotated[str, Field(alias="APP_NAME")] = "RAG System"
+    app_version: Annotated[str, Field(alias="APP_VERSION")] = "1.0.0"
+    debug: Annotated[bool, Field(alias="DEBUG")] = False
 
     # Data settings
-    data_directory: Path = Field(
-        default=Path("data"),
-        description="Directory containing documents to process",
-    )
-    supported_file_types: List[str] = Field(
-        default=[".pdf", ".txt", ".docx", ".md", ".csv", ".xlsx"],
-        description="Supported file types for processing",
-    )
+    data_directory: Annotated[Path, Field(alias="DATA_DIRECTORY")] = Path("data")
+    supported_file_types: Annotated[list[str], Field(alias="SUPPORTED_FILE_TYPES")] = [".pdf", ".txt", ".docx", ".md", ".csv", ".xlsx"]
 
     # Vector store settings
-    chroma_persist_directory: Path = Field(
-        default=Path("./chroma_db"),
-        description="ChromaDB persistence directory",
-    )
-    chroma_telemetry_enabled: bool = Field(
-        default=False, description="Avoid sending telemetry events"
-    )
-    collection_name: str = Field(
-        default="hr_policies",
-        description="ChromaDB collection name",
-    )
+    chroma_persist_directory: Annotated[Path, Field(alias="CHROMA_PERSIST_DIRECTORY")] = Path("chroma")
+    chroma_telemetry_enabled: Annotated[bool, Field(alias="CHROMA_TELEMETRY_ENABLED")] = True
+    collection_name: Annotated[str, Field(alias="COLLECTION_NAME")] = "hr_policies"
 
     # Embedding settings
-    embedding_model_name: str = Field(
-        default="all-MiniLM-L6-v2",
-        description="Sentence transformer model name",
-    )
-    chunk_size: int = Field(
-        default=30,
-        description="Size of text chunks for processing",
-    )
-    chunk_overlap: int = Field(
-        default=6,
-        description="Overlap between text chunks",
-    )
+    embedding_model_name: Annotated[str, Field(alias="EMBEDDING_MODEL_NAME")] = "all-MiniLM-L6-v2"
+    chunk_size: Annotated[int, Field(alias="CHUNK_SIZE")] = 30
+    chunk_overlap: Annotated[int, Field(alias="CHUNK_OVERLAP")] = 0
     # Adaptive chunking settings
-    small_chunk_size: int = Field(
-        default=300,
-        description="Chunk size for small documents (characters)",
-    )
-    small_chunk_overlap: int = Field(
-        default=50,
-        description="Chunk overlap for small documents (characters)",
-    )
-    large_chunk_size: int = Field(
-        default=1000,
-        description="Chunk size for large documents (characters)",
-    )
-    large_chunk_overlap: int = Field(
-        default=200,
-        description="Chunk overlap for large documents (characters)",
-    )
-    chunk_size_threshold: int = Field(
-        default=1000,
-        description="Threshold (characters) to distinguish small vs large documents",
-    )
+    small_chunk_size: Annotated[int, Field(alias="SMALL_CHUNK_SIZE")] = 300
+    small_chunk_overlap: Annotated[int, Field(alias="SMALL_CHUNK_OVERLAP")] = 50
+    large_chunk_size: Annotated[int, Field(alias="LARGE_CHUNK_SIZE")] = 1000
+    large_chunk_overlap: Annotated[int, Field(alias="LARGE_CHUNK_OVERLAP")] = 200
+    chunk_size_threshold: Annotated[int, Field(alias="CHUNK_SIZE_THRESHOLD")] = 1000
 
     # LLM settings
-    openai_api_key: Optional[str] = Field(
-        default="none",
-        description="OpenAI API key for LLM integration",
-    )
-    openai_model_name: str = Field(
-        default="gpt-3.5-turbo",
-        description="OpenAI model name",
-    )
+    openai_api_key: Annotated[str | None, Field(alias="OPENAI_API_KEY")] = None
+    openai_model_name: Annotated[str, Field(alias="OPENAI_MODEL_NAME")] = "gpt-4o-mini"
 
     # Logging settings
-    log_level: str = Field(default="INFO", description="Logging level")
-    log_format: str = Field(
-        default="json",
-        description="Log format (json or text)",
-    )
+    log_level: Annotated[str, Field(alias="LOG_LEVEL")] = "INFO"
+    log_format: Annotated[str, Field(alias="LOG_FORMAT")] = "text"
 
     # UI settings
-    streamlit_port: int = Field(default=8501, description="Streamlit UI port")
+    streamlit_port: Annotated[int, Field(alias="STREAMLIT_PORT")] = 8501
 
     @field_validator("chroma_persist_directory")
     def create_directories(cls, v):
         """Ensure Chroma directory exists."""
+        path = Path(v)
+        path.mkdir(parents=True, exist_ok=True)
+        return path
+
+    @field_validator("data_directory")
+    def create_data_directory(cls, v):
+        """Ensure data directory exists."""
         path = Path(v)
         path.mkdir(parents=True, exist_ok=True)
         return path
@@ -115,14 +74,3 @@ class Settings(BaseSettings):
         if v.upper() not in valid_levels:
             raise ValueError(f"Log level must be one of {valid_levels}")
         return v.upper()
-
-    class Config:
-        """Pydantic configuration."""
-
-        env_file = ".env"
-        env_file_encoding = "utf-8"
-        case_sensitive = False
-
-
-# Global settings instance
-settings = Settings()

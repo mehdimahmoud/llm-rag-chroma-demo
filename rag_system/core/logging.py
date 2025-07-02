@@ -12,12 +12,9 @@ from typing import Any, Dict, Optional
 import structlog
 from structlog.stdlib import LoggerFactory
 
-from .config import settings
-
-
 def setup_logging(
-    log_level: Optional[str] = None,
-    log_format: Optional[str] = None,
+    log_level: str,
+    log_format: str,
     enable_console: bool = True,
     enable_file: bool = False,
     log_file: Optional[str] = None,
@@ -32,10 +29,8 @@ def setup_logging(
         enable_file: Enable file logging
         log_file: Log file path
     """
-    # Use settings if not provided
-    log_level = log_level or settings.log_level
-    log_format = log_format or settings.log_format
-
+    if not log_level or not log_format:
+        raise ValueError("log_level and log_format must be provided to setup_logging")
     # Configure standard library logging
     logging.basicConfig(
         format="%(message)s",

@@ -64,12 +64,17 @@ clean:	clean-env
 	find . -type f -name "*.pyd" -delete
 
 clean-env:
-	@echo "Unsetting environment variables with LOG_, CHROMA_, CHUNK_, or EMBEDDING_ prefixes..."
-	@for prefix in LOG_ CHROMA_ CHUNK_ EMBEDDING_; do \
-		for var in $$(env | grep "^$$prefix" | cut -d= -f1); do \
+	@echo "Unsetting all environment variables defined in .env file..."
+	@if [ -f .env ]; then \
+		for var in $$(grep -E '^[A-Z_]+=' .env | cut -d'=' -f1); do \
+			echo "Unsetting $$var"; \
 			unset $$var; \
 		done; \
-	done
+	else \
+		echo "No .env file found, skipping environment variable cleanup"; \
+	fi
+
+clean-all: clean clean-env
 
 # Code Quality
 lint:

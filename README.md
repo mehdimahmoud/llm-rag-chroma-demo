@@ -94,15 +94,32 @@ make install-dev
 
 ### Environment Variables
 
-Create a `.env` file in the project root:
+Create a `.env` file in the project root by copying the template:
+
+```bash
+cp .env.default .env
+```
+
+Then edit the `.env` file to set your actual values, especially the OpenAI API key:
 
 ```env
-APP_NAME=My RAG System
-DEBUG=true
-CHUNK_SIZE=1000
-CHUNK_OVERLAP=200
-EMBEDDING_MODEL_NAME=all-MiniLM-L6-v2
+# Project settings
+APP_NAME=RAG System
+# Logging
 LOG_LEVEL=INFO
+# Langchain settings
+SUPPORTED_FILE_TYPES=[".pdf", ".txt", ".docx", ".md", ".csv", ".xlsx"]
+CHUNK_SIZE=120
+CHUNK_OVERLAP=24
+# ChromaDB settings
+CHROMA_PERSIST_DIRECTORY=./chroma_db
+# avoid sending telemetry
+CHROMA_TELEMETRY_ENABLED=false 
+# Embedding model
+EMBEDDING_MODEL_NAME=all-MiniLM-L6-v2
+# Openai
+OPENAI_API_KEY="your actual openai api key here"
+OPENAI_MODEL_NAME="gpt-4o-mini"
 ```
 
 ## 🎯 Usage

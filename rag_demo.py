@@ -10,22 +10,22 @@ from pathlib import Path
 
 from rag_system.rag_system import RAGSystem
 from rag_system.core.logging import setup_logging
-
-# Setup logging
-setup_logging(log_level="INFO", log_format="text")
-
+from rag_system.core.config import Settings
 
 def main():
-    """Run the RAG system demo."""
+    settings = Settings()
+    setup_logging(log_level=settings.log_level, log_format=settings.log_format)
+    print(f"[DEBUG] OPENAI_API_KEY from settings: {settings.openai_api_key}")
+
     print("🤖 RAG System Demo")
     print("=" * 50)
     
     # Initialize the system
     print("Initializing RAG system...")
-    rag = RAGSystem()
+    rag = RAGSystem(settings=settings)
     
     # Check if data directory exists
-    data_dir = Path("data")
+    data_dir = settings.data_directory
     if not data_dir.exists():
         print(f"❌ Data directory '{data_dir}' not found!")
         print("Please create the data directory and add some documents.")
@@ -73,19 +73,48 @@ def main():
     for i, query in enumerate(demo_queries, 1):
         print(f"\nQuery {i}: {query}")
         print("-" * 40)
-        
         try:
-            results = rag.query(query, k=2)
-            
+            results = rag.query(query, k=2, include_scores=True)
             if results:
-                for j, (doc, score) in enumerate(results, 1):
-                    print(f"Result {j}:")
-                    print(f"  Source: {Path(doc.metadata.get('source', 'Unknown')).name}")
-                    print(f"  Content: {doc.page_content[:150]}...")
-                    print(f"  Score: {score:.4f}")  # Optional: Print the score if needed
+                for j, result in enumerate(results, 1):
+                    if isinstance(result, tuple) and len(result) == 2 and isinstance(result[1], (float, int)):
+                        doc, score = result
+                        print(f"Result {j}:")
+                        print(f"  Source: {Path(doc.metadata.get('source', 'Unknown')).name}")
+                        print(f"  Content: {doc.page_content[:150]}...")
+                        print(f"  Score: {score:.4f}")
+                    else:
+                        print(f"Result {j}: [Skipped: Unexpected result format: {type(result)}]")
             else:
-                print("  No results found")
-                
+                print("  No results found above relevance threshold.")
+
+            # Show the context and final LLM-augmented response
+            print("\n[Enterprise] RAG-augmented LLM response:")
+            # To log the context, we need to reconstruct it as in generate_rag_response
+            MIN_RELEVANCE_SCORE = getattr(rag, 'MIN_RELEVANCE_SCORE', 0.5) if hasattr(rag, 'MIN_RELEVANCE_SCORE') else 0.5
+            filtered = []
+            for result in results:
+                if isinstance(result, tuple) and len(result) == 2 and isinstance(result[1], (float, int)):
+                    doc, score = result
+                    if score >= MIN_RELEVANCE_SCORE:
+                        filtered.append(doc)
+            if not filtered:
+                context = ""
+            else:
+                context_chunks = []
+                for doc in filtered:
+                    if hasattr(doc, "page_content"):
+                        context_chunks.append(str(doc.page_content))
+                    elif isinstance(doc, dict):
+                        context_chunks.append(str(doc.get("page_content", str(doc))))
+                    else:
+                        context_chunks.append(str(doc))
+                context = "\n---\n".join(context_chunks)
+            print("[Enterprise] Context passed to LLM:")
+            print(context if context else "[EMPTY CONTEXT]")
+            llm_response = rag.generate_rag_response(query, k=2)
+            print("[Enterprise] LLM Response:")
+            print(llm_response)
         except Exception as e:
             print(f"  ❌ Query failed: {e}")
     

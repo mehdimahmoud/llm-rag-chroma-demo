@@ -9,15 +9,15 @@ import streamlit as st
 from pathlib import Path
 
 from rag_system.rag_system import RAGSystem
-from rag_system.core.config import settings
+from rag_system.core.config import Settings
 from rag_system.core.logging import setup_logging
 
-# Setup logging
-setup_logging(log_level="INFO", log_format="text")
-
+# Settings
+settings = Settings()
 
 def main():
-    """Main Streamlit application."""
+    """Main Streamlit application."""    
+    setup_logging(log_level=settings.log_level, log_format=settings.log_format)
     st.set_page_config(
         page_title="RAG System",
         page_icon="🤖",
@@ -40,7 +40,7 @@ def main():
         if st.button("🔄 Initialize System"):
             with st.spinner("Initializing RAG system..."):
                 try:
-                    st.session_state.rag_system = RAGSystem()
+                    st.session_state.rag_system = RAGSystem(settings=settings)
                     st.session_state.initialized = True
                     st.success("System initialized successfully!")
                 except Exception as e:

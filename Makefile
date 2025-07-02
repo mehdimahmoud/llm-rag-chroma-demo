@@ -44,7 +44,6 @@ install:
 install-dev:
 	@echo "Installing development dependencies..."
 	pip install -e ".[dev]"
-	pre-commit install
 
 clean:	clean-env
 	@echo "Cleaning build artifacts..."
@@ -164,10 +163,7 @@ info:
 	@echo "Data directory: $(shell python -c "from rag_system.core.config import settings; print(settings.data_directory)")"
 	@echo "ChromaDB directory: $(shell python -c "from rag_system.core.config import settings; print(settings.chroma_persist_directory)")"
 
-# Pre-commit hooks
-pre-commit-run:
-	@echo "Running pre-commit hooks..."
-	pre-commit run --all-files
+
 
 # CI/CD helpers
 ci-test: install-dev test-cov lint type-check

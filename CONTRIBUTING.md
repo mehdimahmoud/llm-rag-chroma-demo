@@ -22,6 +22,11 @@ cd <repo-directory>
   ```bash
   make install-dev
   ```
+- **(Recommended) Unset all environment variables from .env in your current shell before running the demo or tests:**
+  ```bash
+  source clean-env.sh
+  ```
+  This ensures your environment is clean and avoids issues with stale or conflicting variables.
 
 ---
 

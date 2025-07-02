@@ -122,6 +122,12 @@ OPENAI_API_KEY="your actual openai api key here"
 OPENAI_MODEL_NAME="gpt-4o-mini"
 ```
 
+> **Note:** If you want to fully reset your environment variables in your current shell, run:
+> ```bash
+> source clean-env.sh
+> ```
+> This ensures no old or conflicting variables interfere with your run.
+
 ## 🎯 Usage
 
 ### Quick Start
@@ -250,6 +256,9 @@ make dev-setup
 
 # Clean build artifacts
 make clean
+
+# (Recommended) Unset all environment variables from .env in your current shell
+source clean-env.sh
 
 # Build package
 make build

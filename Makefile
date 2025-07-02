@@ -74,6 +74,12 @@ clean-env:
 		echo "No .env file found, skipping environment variable cleanup"; \
 	fi
 
+clean-env-shell:
+	@echo "To unset environment variables in your current shell, run:"
+	@echo "source clean-env.sh"
+	@echo "or"
+	@echo "./clean-env.sh"
+
 clean-all: clean clean-env
 
 # Code Quality

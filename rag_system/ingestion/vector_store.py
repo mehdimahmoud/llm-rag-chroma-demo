@@ -12,7 +12,6 @@ from chromadb.config import Settings as ChromaSettings
 from langchain_chroma import Chroma
 from langchain_core.documents import Document
 
-from ..core.config import settings
 from ..core.logging import get_logger
 
 logger = get_logger(__name__)
@@ -23,6 +22,7 @@ class VectorStore:
 
     def __init__(
         self,
+        settings,
         persist_directory: Optional[str] = None,
         collection_name: Optional[str] = None,
         embedding_function=None,
@@ -31,10 +31,12 @@ class VectorStore:
         Initialize the vector store.
 
         Args:
+            settings: Settings instance
             persist_directory: Directory to persist ChromaDB data
             collection_name: Name of the collection
             embedding_function: Embedding function for the vector store
         """
+        self.settings = settings
         self.persist_directory = str(
             persist_directory or settings.chroma_persist_directory
         )

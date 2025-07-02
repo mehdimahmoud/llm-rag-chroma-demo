@@ -14,7 +14,6 @@ from langchain_core.documents import Document
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
-from ..core.config import settings
 from ..core.logging import get_logger
 
 # from sentence_transformers import SentenceTransformer
@@ -28,6 +27,7 @@ class TextProcessor:
 
     def __init__(
         self,
+        settings,
         embedding_model_name: Optional[str] = None,
         chunk_size: Optional[int] = None,  # legacy, not used in adaptive mode
         chunk_overlap: Optional[int] = None,  # legacy, not used in adaptive mode
@@ -36,8 +36,10 @@ class TextProcessor:
         Initialize the text processor.
 
         Args:
+            settings: Settings instance
             embedding_model_name: Name of the sentence transformer model
         """
+        self.settings = settings
         self.embedding_model_name = (
             embedding_model_name or settings.embedding_model_name
         )

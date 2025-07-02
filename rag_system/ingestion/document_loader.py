@@ -14,7 +14,6 @@ from langchain_community.document_loaders import (CSVLoader, Docx2txtLoader,
 from langchain_community.document_loaders.base import BaseLoader
 from langchain_core.documents import Document
 
-from ..core.config import settings
 from ..core.logging import get_logger
 
 logger = get_logger(__name__)
@@ -33,13 +32,15 @@ class DocumentLoader:
         ".md": TextLoader,
     }
 
-    def __init__(self, data_directory: Optional[Path] = None):
+    def __init__(self, settings, data_directory: Optional[Path] = None):
         """
         Initialize the document loader.
 
         Args:
+            settings: Settings instance
             data_directory: Directory containing documents to load
         """
+        self.settings = settings
         self.data_directory = data_directory or settings.data_directory
         self.supported_types = set(settings.supported_file_types)
 

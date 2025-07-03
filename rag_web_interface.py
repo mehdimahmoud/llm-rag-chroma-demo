@@ -9,15 +9,18 @@ import streamlit as st
 from pathlib import Path
 
 from rag_system.rag_system import RAGSystem
-from rag_system.core.config import Settings
-from rag_system.core.logging import setup_logging
+from rag_system.core.config import  Settings
+from rag_system.core.logging import setup_logging, get_logger
 
 # Settings
 settings = Settings()
 
+# Setup logging
+setup_logging(log_level=settings.log_level, log_format=settings.log_format)
+logger = get_logger(__name__)
+
 def main():
-    """Main Streamlit application."""    
-    setup_logging(log_level=settings.log_level, log_format=settings.log_format)
+    """Main Streamlit application."""
     st.set_page_config(
         page_title="RAG System",
         page_icon="🤖",
@@ -162,7 +165,7 @@ def render_query_tab():
     col1, col2 = st.columns([3, 1])
     
     with col1:
-        num_results = st.slider("Number of results:", min_value=1, max_value=10, value=4)
+        num_results = st.slider("Number of results:", min_value=1, max_value=10, value=2)
     
     with col2:
         include_scores = st.checkbox("Include scores")
@@ -170,15 +173,21 @@ def render_query_tab():
     if st.button("🔍 Search") and query:
         with st.spinner("Searching..."):
             try:
-                results = st.session_state.rag_system.query(
-                    query=query,
-                    k=num_results,
-                    include_scores=include_scores
+                # Get LLM-augmented response
+                llm_response = st.session_state.rag_system.generate_rag_response(
+                    query=query, k=num_results
                 )
-                
+                logger.info("LLM response", response=llm_response)
+                st.success("LLM Response:")
+                st.write(llm_response)
+                print("LLM response:", llm_response)
+
+                # Show retrieved documents as context
+                results = st.session_state.rag_system.query(
+                    query=query, k=num_results, include_scores=include_scores
+                )
                 if results:
-                    st.success(f"Found {len(results)} results")
-                    
+                    st.info(f"Showing {len(results)} retrieved documents (context):")
                     for i, result in enumerate(results, 1):
                         with st.expander(f"Result {i}"):
                             if include_scores:
@@ -186,15 +195,17 @@ def render_query_tab():
                                 st.write(f"**Score:** {score:.4f}")
                             else:
                                 doc = result
-                            
-                            st.write(f"**Source:** {Path(doc.metadata.get('source', 'Unknown')).name}")
-                            st.write(f"**Content:**")
+                            st.write(
+                                f"**Source:** "
+                                f"{Path(doc.metadata.get('source', 'Unknown')).name}"
+                            )
+                            st.write("**Content:**")
                             st.text(doc.page_content)
                 else:
                     st.info("No results found")
-                    
             except Exception as e:
                 st.error(f"❌ Query failed: {e}")
+                logger.error("Query failed", error=str(e))
 
 
 def render_stats_tab():

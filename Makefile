@@ -85,21 +85,30 @@ clean-all: clean clean-env
 # Code Quality
 lint:
 	@echo "Running linting checks..."
-	flake8 rag_system/ tests/
+	flake8 *.py rag_system/ tests/
 	@echo "✅ Linting passed"
 
-format:
+autoflake:
+	@echo "Removing unused imports and variables..."
+	autoflake --in-place --remove-unused-variables --remove-all-unused-imports -r rag_system/ tests/ *.py
+	@echo "✅ Unused imports and variables removed"
+
+format: autoflake
 	@echo "Formatting code..."
-	black rag_system/ tests/
-	isort rag_system/ tests/
+	black *.py rag_system/ tests/
+	isort *.py rag_system/ tests/
 	@echo "✅ Code formatted"
 
 type-check:
-	@echo "Running type checks..."
-	mypy rag_system/
+	@echo "Running type checks on: *.py rag_system/ tests/"
+	mypy *.py rag_system/ tests/
 	@echo "✅ Type checking passed"
 
-check-all: format lint type-check
+check-all:
+	$(MAKE) autoflake
+	$(MAKE) format
+	$(MAKE) lint
+	$(MAKE) type-check
 	@echo "✅ All code quality checks passed"
 
 # Testing
@@ -192,4 +201,10 @@ docker-build:
 docker-run:
 	@echo "Running Docker container..."
 	# Add Docker run commands here when containerization is added
-	@echo "Docker run not yet implemented" 
+	@echo "Docker run not yet implemented"
+
+precheck:
+	bash .git/hooks/pre-commit
+
+%:
+	@: 

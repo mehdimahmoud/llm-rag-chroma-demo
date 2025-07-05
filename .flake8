@@ -1,0 +1,3 @@
+[flake8]
+exclude = .venv*,venv*,build,dist,.mypy_cache,.pytest_cache,chroma_db,rag_cache,htmlcov,__pycache__,.coverage,coverage.xml,.streamlit,*.egg-info
+max-line-length = 79 

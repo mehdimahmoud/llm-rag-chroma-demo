@@ -5,12 +5,13 @@ A Streamlit web application for interacting with the RAG system,
 providing document ingestion, querying, and system monitoring.
 """
 
-import streamlit as st
 from pathlib import Path
 
+import streamlit as st
+
+from rag_system.core.config import Settings
+from rag_system.core.logging import get_logger, setup_logging
 from rag_system.rag_system import RAGSystem
-from rag_system.core.config import  Settings
-from rag_system.core.logging import setup_logging, get_logger
 
 # Settings
 settings = Settings()
@@ -19,27 +20,28 @@ settings = Settings()
 setup_logging(log_level=settings.log_level, log_format=settings.log_format)
 logger = get_logger(__name__)
 
-def main():
+
+def main() -> None:
     """Main Streamlit application."""
     st.set_page_config(
         page_title="RAG System",
         page_icon="🤖",
         layout="wide",
-        initial_sidebar_state="expanded"
+        initial_sidebar_state="expanded",
     )
-    
+
     st.title("🤖 RAG System")
     st.markdown("Retrieval-Augmented Generation with LangChain and ChromaDB")
-    
+
     # Initialize session state
     if "rag_system" not in st.session_state:
         st.session_state.rag_system = None
         st.session_state.initialized = False
-    
+
     # Sidebar
     with st.sidebar:
         st.header("System Control")
-        
+
         if st.button("🔄 Initialize System"):
             with st.spinner("Initializing RAG system..."):
                 try:
@@ -48,10 +50,10 @@ def main():
                     st.success("System initialized successfully!")
                 except Exception as e:
                     st.error(f"Failed to initialize system: {e}")
-        
+
         if st.session_state.initialized:
             st.success("✅ System Ready")
-            
+
             if st.button("🗑️ Clear Database"):
                 if st.session_state.rag_system:
                     with st.spinner("Clearing database..."):
@@ -60,83 +62,96 @@ def main():
                             st.success("Database cleared successfully!")
                         except Exception as e:
                             st.error(f"Failed to clear database: {e}")
-        
+
         # System info
         st.header("System Info")
         st.info(f"Data Directory: {settings.data_directory}")
         st.info(f"Collection: {settings.collection_name}")
         st.info(f"Embedding Model: {settings.embedding_model_name}")
-    
+
     # Main content
     if not st.session_state.initialized:
         st.warning("Please initialize the system from the sidebar first.")
         return
-    
+
     # Tabs
-    tab1, tab2, tab3, tab4 = st.tabs(["📚 Ingest", "🔍 Query", "📊 Statistics", "⚙️ Settings"])
-    
+    tab1, tab2, tab3, tab4 = st.tabs(
+        ["📚 Ingest", "🔍 Query", "📊 Statistics", "⚙️ Settings"]
+    )
+
     with tab1:
         render_ingest_tab()
-    
+
     with tab2:
         render_query_tab()
-    
+
     with tab3:
         render_stats_tab()
-    
+
     with tab4:
         render_settings_tab()
 
 
-def render_ingest_tab():
+def render_ingest_tab() -> None:
     """Render the document ingestion tab."""
     st.header("📚 Document Ingestion")
-    
+
     if not st.session_state.rag_system:
         st.error("System not initialized")
         return
-    
+
     # File upload
     st.subheader("Upload Documents")
     uploaded_files = st.file_uploader(
         "Choose files to upload",
         type=["pdf", "txt", "docx", "md", "csv", "xlsx"],
-        accept_multiple_files=True
+        accept_multiple_files=True,
     )
-    
+
     if uploaded_files:
         st.write(f"Selected {len(uploaded_files)} files:")
         for file in uploaded_files:
             st.write(f"- {file.name} ({file.type})")
-    
+
     # Ingest options
     col1, col2 = st.columns(2)
-    
+
     with col1:
         if st.button("📥 Ingest All Documents"):
             with st.spinner("Ingesting documents..."):
                 try:
                     stats = st.session_state.rag_system.ingest_documents()
-                    
+
                     if stats.get("status") == "success":
                         st.success("✅ Ingestion completed successfully!")
-                        
+
                         # Display statistics
                         col1, col2, col3, col4 = st.columns(4)
                         with col1:
-                            st.metric("Original Docs", stats.get("original_documents", 0))
+                            st.metric(
+                                "Original Docs",
+                                stats.get("original_documents", 0),
+                            )
                         with col2:
-                            st.metric("Chunked Docs", stats.get("chunked_documents", 0))
+                            st.metric(
+                                "Chunked Docs",
+                                stats.get("chunked_documents", 0),
+                            )
                         with col3:
-                            st.metric("Embeddings", stats.get("embeddings_generated", 0))
+                            st.metric(
+                                "Embeddings",
+                                stats.get("embeddings_generated", 0),
+                            )
                         with col4:
-                            st.metric("Stored", stats.get("documents_stored", 0))
+                            st.metric(
+                                "Stored", stats.get("documents_stored", 0)
+                            )
                     else:
                         st.warning("No documents found for ingestion")
-                        
+
                 except Exception as e:
                     st.error(f"❌ Ingestion failed: {e}")
-    
+
     with col2:
         if st.button("📋 Show Supported Files"):
             try:
@@ -151,31 +166,37 @@ def render_ingest_tab():
                 st.error(f"Failed to get files: {e}")
 
 
-def render_query_tab():
+def render_query_tab() -> None:
     """Render the query tab."""
     st.header("🔍 Query System")
-    
+
     if not st.session_state.rag_system:
         st.error("System not initialized")
         return
-    
+
     # Query input
-    query = st.text_input("Enter your query:", placeholder="What are the HR policies?")
-    
+    query = st.text_input(
+        "Enter your query:", placeholder="What are the HR policies?"
+    )
+
     col1, col2 = st.columns([3, 1])
-    
+
     with col1:
-        num_results = st.slider("Number of results:", min_value=1, max_value=10, value=2)
-    
+        num_results = st.slider(
+            "Number of results:", min_value=1, max_value=10, value=2
+        )
+
     with col2:
         include_scores = st.checkbox("Include scores")
-    
+
     if st.button("🔍 Search") and query:
         with st.spinner("Searching..."):
             try:
                 # Get LLM-augmented response
-                llm_response = st.session_state.rag_system.generate_rag_response(
-                    query=query, k=num_results
+                llm_response = (
+                    st.session_state.rag_system.generate_rag_response(
+                        query=query, k=num_results
+                    )
                 )
                 logger.info("LLM response", response=llm_response)
                 st.success("LLM Response:")
@@ -187,7 +208,10 @@ def render_query_tab():
                     query=query, k=num_results, include_scores=include_scores
                 )
                 if results:
-                    st.info(f"Showing {len(results)} retrieved documents (context):")
+                    st.info(
+                        f"Showing {len(results)} retrieved documents "
+                        f"(context):"
+                    )
                     for i, result in enumerate(results, 1):
                         with st.expander(f"Result {i}"):
                             if include_scores:
@@ -195,10 +219,10 @@ def render_query_tab():
                                 st.write(f"**Score:** {score:.4f}")
                             else:
                                 doc = result
-                            st.write(
-                                f"**Source:** "
-                                f"{Path(doc.metadata.get('source', 'Unknown')).name}"
-                            )
+                            source_name = Path(
+                                doc.metadata.get("source", "Unknown")
+                            ).name
+                            st.write(f"**Source:** {source_name}")
                             st.write("**Content:**")
                             st.text(doc.page_content)
                 else:
@@ -208,89 +232,90 @@ def render_query_tab():
                 logger.error("Query failed", error=str(e))
 
 
-def render_stats_tab():
+def render_stats_tab() -> None:
     """Render the statistics tab."""
     st.header("📊 System Statistics")
-    
+
     if not st.session_state.rag_system:
         st.error("System not initialized")
         return
-    
+
     if st.button("🔄 Refresh Statistics"):
         with st.spinner("Loading statistics..."):
             try:
                 stats = st.session_state.rag_system.get_system_stats()
-                
+
                 # Vector store stats
                 vector_stats = stats.get("vector_store", {})
                 col1, col2, col3 = st.columns(3)
-                
+
                 with col1:
                     st.metric(
                         "Documents in DB",
-                        vector_stats.get("document_count", 0)
+                        vector_stats.get("document_count", 0),
                     )
-                
+
                 with col2:
                     st.metric(
                         "Collection",
-                        vector_stats.get("collection_name", "Unknown")
+                        vector_stats.get("collection_name", "Unknown"),
                     )
-                
+
                 with col3:
-                    st.metric(
-                        "Total Sources",
-                        stats.get("total_sources", 0)
-                    )
-                
+                    st.metric("Total Sources", stats.get("total_sources", 0))
+
                 # File types
                 file_types = stats.get("file_types", {})
                 if file_types:
                     st.subheader("📁 Files by Type")
                     for file_type, count in file_types.items():
                         st.write(f"- {file_type}: {count}")
-                
+
                 # Document sources
                 sources = stats.get("document_sources", [])
                 if sources:
                     st.subheader("🗂️ Document Sources")
                     for source in sources:
                         st.write(f"- {Path(source).name}")
-                
+
             except Exception as e:
                 st.error(f"❌ Failed to load statistics: {e}")
 
 
-def render_settings_tab():
+def render_settings_tab() -> None:
     """Render the settings tab."""
     st.header("⚙️ System Settings")
-    
+
     st.subheader("Current Configuration")
-    
+
     # Display current settings
     col1, col2 = st.columns(2)
-    
+
     with col1:
         st.write("**Data Settings:**")
         st.write(f"- Data Directory: {settings.data_directory}")
-        st.write(f"- Supported Types: {', '.join(settings.supported_file_types)}")
-        
+        st.write(
+            f"- Supported Types: {', '.join(settings.supported_file_types)}"
+        )
+
         st.write("**Vector Store Settings:**")
         st.write(f"- Persist Directory: {settings.chroma_persist_directory}")
         st.write(f"- Collection Name: {settings.collection_name}")
-    
+
     with col2:
         st.write("**Embedding Settings:**")
         st.write(f"- Model: {settings.embedding_model_name}")
         st.write(f"- Chunk Size: {settings.chunk_size}")
         st.write(f"- Chunk Overlap: {settings.chunk_overlap}")
-        
+
         st.write("**System Settings:**")
         st.write(f"- Log Level: {settings.log_level}")
         st.write(f"- Debug Mode: {settings.debug}")
-    
-    st.info("💡 Settings can be modified via environment variables or .env file")
+
+    st.info(
+        "💡 Settings can be modified via environment variables or .env file"
+    )
 
 
 if __name__ == "__main__":
-    main() 
+    main()

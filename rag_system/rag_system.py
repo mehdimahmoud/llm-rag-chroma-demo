@@ -6,7 +6,7 @@ document ingestion, processing, and querying operations.
 """
 
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Callable
+from typing import Any, Dict, List, Optional
 
 from langchain_core.documents import Document
 
@@ -22,10 +22,13 @@ class PromptBuilder:
     """
     Enterprise-grade, configurable prompt builder for RAG.
     """
+
     def __init__(self, template: str | None = None):
         self.template = template or (
-            "You are an expert assistant. Use the following context to answer the user's question.\n"
-            "If the answer is not in the context, say 'I don't know based on the provided information.'\n\n"
+            "You are an expert assistant. Use the following context to "
+            "answer the user's question.\n"
+            "If the answer is not in the context, say 'I don't know "
+            "based on the provided information.'\n\n"
             "Context:\n{context}\n\nQuestion:\n{question}\n\nAnswer:"
         )
 
@@ -36,10 +39,14 @@ class PromptBuilder:
 class RAGSystem:
     """Main RAG system orchestrator."""
 
-    def __init__(self, settings, prompt_builder: PromptBuilder | None = None):
+    def __init__(
+        self, settings: Any, prompt_builder: PromptBuilder | None = None
+    ):
         """Initialize the RAG system with all components."""
         self.settings = settings
-        self.MIN_RELEVANCE_SCORE = getattr(settings, "min_relevance_score", 0.5)
+        self.MIN_RELEVANCE_SCORE = getattr(
+            settings, "min_relevance_score", 0.5
+        )
         logger.info("Initializing RAG system")
 
         # Initialize components with settings
@@ -49,10 +56,13 @@ class RAGSystem:
         # Create embedding function for vector store
         embedding_function = self.text_processor.embedding_model
         print(
-            "Has embed_documents: " f"{hasattr(embedding_function, 'embed_documents')}",
+            "Has embed_documents: "
+            f"{hasattr(embedding_function, 'embed_documents')}",
         )
 
-        self.vector_store = VectorStore(settings, embedding_function=embedding_function)
+        self.vector_store = VectorStore(
+            settings, embedding_function=embedding_function
+        )
 
         self.prompt_builder = prompt_builder or PromptBuilder()
 
@@ -134,20 +144,27 @@ class RAGSystem:
 
         try:
             if include_scores:
-                results = self.vector_store.similarity_search_with_score(
-                    query=query,
-                    k=k,
-                    filter=filter,
+                results_with_scores: List[tuple[Document, float]] = (
+                    self.vector_store.similarity_search_with_score(
+                        query=query,
+                        k=k,
+                        filter=filter,
+                    )
                 )
+                logger.info(
+                    "Query completed", results_count=len(results_with_scores)
+                )
+                return results_with_scores
             else:
-                results = self.vector_store.similarity_search(
-                    query=query,
-                    k=k,
-                    filter=filter,
+                results_docs: List[Document] = (
+                    self.vector_store.similarity_search(
+                        query=query,
+                        k=k,
+                        filter=filter,
+                    )
                 )
-
-            logger.info("Query completed", results_count=len(results))
-            return results
+                logger.info("Query completed", results_count=len(results_docs))
+                return results_docs
 
         except Exception as e:
             logger.error("Query failed", query=query, error=str(e))
@@ -191,9 +208,11 @@ class RAGSystem:
         try:
             self.vector_store.delete_collection()
             logger.info("Vector database cleared successfully")
-            # Re-instantiate VectorStore to ensure a new collection is created and referenced
+            # Re-instantiate VectorStore to ensure a new collection is created
+            # and referenced
             self.vector_store = VectorStore(
-                embedding_function=self.text_processor.embedding_model
+                settings=self.settings,
+                embedding_function=self.text_processor.embedding_model,
             )
         except Exception as e:
             logger.error("Failed to clear vector database", error=str(e))
@@ -218,14 +237,18 @@ class RAGSystem:
         files = self.document_loader.get_supported_files()
         return [str(f) for f in files]
 
-    def _get_llm(self):
+    def _get_llm(self) -> Any:
         """
         Initialize and return a ChatOpenAI instance using settings only.
         """
         if not self.settings.openai_api_key:
-            raise ValueError("OpenAI API key is required to use OpenAI LLM features. Please set openai_api_key in your config or environment.")
+            raise ValueError(
+                "OpenAI API key is required to use OpenAI LLM features. "
+                "Please set openai_api_key in your config or environment."
+            )
         from langchain_openai import ChatOpenAI
         from pydantic import SecretStr
+
         api_key = self.settings.openai_api_key
         if not isinstance(api_key, SecretStr):
             api_key = SecretStr(api_key)
@@ -252,7 +275,8 @@ class RAGSystem:
 
     def generate_rag_response(self, query: str, k: int = 4) -> str:
         """
-        Retrieve top-k relevant documents (with scores), filter by relevance, build a prompt, and generate an answer using the LLM.
+        Retrieve top-k relevant documents (with scores), filter by relevance,
+        build a prompt, and generate an answer using the LLM.
 
         Args:
             query: The user query
@@ -266,17 +290,33 @@ class RAGSystem:
         filtered = []
         for result in results:
             # Only process (Document, float) tuples
-            if isinstance(result, tuple) and len(result) == 2 and isinstance(result[1], (float, int)):
+            if (
+                isinstance(result, tuple)
+                and len(result) == 2
+                and isinstance(result[1], (float, int))
+            ):
                 doc, score = result
                 doc_preview_val = getattr(doc, "page_content", doc)
                 doc_preview = str(doc_preview_val)[:100]
-                logger.info("Retrieved document with score", score=score, doc_preview=doc_preview)
+                logger.info(
+                    "Retrieved document with score",
+                    score=score,
+                    doc_preview=doc_preview,
+                )
                 if score >= self.MIN_RELEVANCE_SCORE:
                     filtered.append(doc)
                 else:
-                    logger.info("Filtered out document below threshold", score=score, threshold=self.MIN_RELEVANCE_SCORE)
+                    logger.info(
+                        "Filtered out document below threshold",
+                        score=score,
+                        threshold=self.MIN_RELEVANCE_SCORE,
+                    )
             else:
-                logger.warning("Skipping result with unexpected format", result_type=str(type(result)), result=str(result))
+                logger.warning(
+                    "Skipping result with unexpected format",
+                    result_type=str(type(result)),
+                    result=str(result),
+                )
         if not filtered:
             context = ""
         else:
@@ -284,8 +324,6 @@ class RAGSystem:
             for doc in filtered:
                 if hasattr(doc, "page_content"):
                     context_chunks.append(str(doc.page_content))
-                elif isinstance(doc, dict):
-                    context_chunks.append(str(doc.get("page_content", str(doc))))
                 else:
                     context_chunks.append(str(doc))
             context = "\n---\n".join(context_chunks)

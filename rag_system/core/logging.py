@@ -7,10 +7,28 @@ and correlation IDs.
 
 import logging
 import sys
-from typing import Any, Dict, Optional
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    List,
+    Mapping,
+    MutableMapping,
+    Optional,
+    Tuple,
+    Union,
+    cast,
+)
 
 import structlog
 from structlog.stdlib import LoggerFactory
+
+# Type alias for structlog processors
+StructlogProcessor = Callable[
+    [Any, str, MutableMapping[str, Any]],
+    Union[Mapping[str, Any], str, bytes, bytearray, Tuple[Any, ...]],
+]
+
 
 def setup_logging(
     log_level: str,
@@ -30,7 +48,9 @@ def setup_logging(
         log_file: Log file path
     """
     if not log_level or not log_format:
-        raise ValueError("log_level and log_format must be provided to setup_logging")
+        raise ValueError(
+            "log_level and log_format must be provided to setup_logging"
+        )
     # Configure standard library logging
     logging.basicConfig(
         format="%(message)s",
@@ -39,7 +59,7 @@ def setup_logging(
     )
 
     # Configure structlog
-    processors = [
+    processors: List[StructlogProcessor] = [
         structlog.stdlib.filter_by_level,
         structlog.stdlib.add_logger_name,
         structlog.stdlib.add_log_level,
@@ -76,7 +96,7 @@ def get_logger(name: str) -> structlog.stdlib.BoundLogger:
     Returns:
         Configured structured logger
     """
-    return structlog.get_logger(name)
+    return cast(structlog.stdlib.BoundLogger, structlog.get_logger(name))
 
 
 def log_performance(

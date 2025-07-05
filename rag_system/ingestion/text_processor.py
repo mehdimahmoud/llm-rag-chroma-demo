@@ -5,11 +5,12 @@ This module handles text chunking, embedding generation, and text preprocessing
 for optimal RAG performance.
 """
 
-from typing import List, Optional
+from typing import Any, List, Optional
 
 # import langchain_community.embeddings
 import torch
 from langchain_core.documents import Document
+
 # from langchain_community.embeddings.huggingface import HuggingFaceEmbeddings
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
@@ -27,10 +28,12 @@ class TextProcessor:
 
     def __init__(
         self,
-        settings,
+        settings: Any,
         embedding_model_name: Optional[str] = None,
         chunk_size: Optional[int] = None,  # legacy, not used in adaptive mode
-        chunk_overlap: Optional[int] = None,  # legacy, not used in adaptive mode
+        chunk_overlap: Optional[
+            int
+        ] = None,  # legacy, not used in adaptive mode
     ):
         """
         Initialize the text processor.
@@ -77,10 +80,12 @@ class TextProcessor:
     #     return self._embedding_model
 
     @property
-    def embedding_model(self):
+    def embedding_model(self) -> HuggingFaceEmbeddings:
         return HuggingFaceEmbeddings(
             model_name=f"sentence-transformers/{self.embedding_model_name}",
-            model_kwargs={"device": "cuda" if torch.cuda.is_available() else "cpu"},
+            model_kwargs={
+                "device": "cuda" if torch.cuda.is_available() else "cpu"
+            },
         )
 
     def chunk_documents(self, documents: List[Document]) -> List[Document]:
@@ -142,13 +147,17 @@ class TextProcessor:
         try:
             embeddings = self.embedding_model.embed_documents(texts)
             embeddings_list = (
-                embeddings if isinstance(embeddings, list) else embeddings.tolist()
+                embeddings
+                if isinstance(embeddings, list)
+                else embeddings.tolist()
             )
 
             logger.info(
                 "Embeddings generated successfully",
                 text_count=len(texts),
-                embedding_dimension=(len(embeddings_list[0]) if embeddings_list else 0),
+                embedding_dimension=(
+                    len(embeddings_list[0]) if embeddings_list else 0
+                ),
             )
 
             return embeddings_list
@@ -169,7 +178,9 @@ class TextProcessor:
         Returns:
             Tuple of (chunked_documents, embeddings)
         """
-        logger.info("Starting document processing", document_count=len(documents))
+        logger.info(
+            "Starting document processing", document_count=len(documents)
+        )
 
         # Chunk documents
         chunked_docs = self.chunk_documents(documents)

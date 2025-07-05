@@ -149,15 +149,30 @@ def handle_query(args: argparse.Namespace, rag_system: RAGSystem) -> None:
         print(f"📊 Found {len(results)} results:\n")
 
         for i, result in enumerate(results, 1):
-            if args.include_scores:
+            if (
+                args.include_scores
+                and isinstance(result, tuple)
+                and len(result) == 2
+            ):
                 doc, score = result
                 print(f"{i}. [Score: {score:.4f}]")
+                if hasattr(doc, "metadata") and hasattr(doc, "page_content"):
+                    print(
+                        f"   Source: {doc.metadata.get('source', 'Unknown')}"
+                    )
+                    print(f"   Content: {doc.page_content[:200]}...")
+                else:
+                    print(f"   Content: {str(doc)[:200]}...")
             else:
                 doc = result
                 print(f"{i}.")
-
-            print(f"   Source: {doc.metadata.get('source', 'Unknown')}")
-            print(f"   Content: {doc.page_content[:200]}...")
+                if hasattr(doc, "metadata") and hasattr(doc, "page_content"):
+                    print(
+                        f"   Source: {doc.metadata.get('source', 'Unknown')}"
+                    )
+                    print(f"   Content: {doc.page_content[:200]}...")
+                else:
+                    print(f"   Content: {str(doc)[:200]}...")
             print()
 
     except Exception as e:

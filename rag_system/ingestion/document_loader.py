@@ -6,11 +6,15 @@ file formats with proper error handling and validation.
 """
 
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
-from langchain_community.document_loaders import (CSVLoader, Docx2txtLoader,
-                                                  PyPDFLoader, TextLoader,
-                                                  UnstructuredExcelLoader)
+from langchain_community.document_loaders import (
+    CSVLoader,
+    Docx2txtLoader,
+    PyPDFLoader,
+    TextLoader,
+    UnstructuredExcelLoader,
+)
 from langchain_community.document_loaders.base import BaseLoader
 from langchain_core.documents import Document
 
@@ -32,7 +36,7 @@ class DocumentLoader:
         ".md": TextLoader,
     }
 
-    def __init__(self, settings, data_directory: Optional[Path] = None):
+    def __init__(self, settings: Any, data_directory: Optional[Path] = None):
         """
         Initialize the document loader.
 
@@ -66,7 +70,10 @@ class DocumentLoader:
 
         supported_files = []
         for file_path in self.data_directory.rglob("*"):
-            if file_path.is_file() and file_path.suffix.lower() in self.supported_types:
+            if (
+                file_path.is_file()
+                and file_path.suffix.lower() in self.supported_types
+            ):
                 supported_files.append(file_path)
 
         logger.info(
@@ -105,8 +112,9 @@ class DocumentLoader:
 
         try:
             loader_class = self.LOADER_MAPPING[file_suffix]
-            loader = loader_class(str(file_path))
-            documents = loader.load()
+            # Different loaders have different constructor signatures
+            loader: Any = loader_class(str(file_path))  # type: ignore
+            documents: List[Document] = loader.load()
 
             # Add metadata
             for doc in documents:
@@ -172,7 +180,7 @@ class DocumentLoader:
             Dictionary mapping file types to counts
         """
         supported_files = self.get_supported_files()
-        type_counts = {}
+        type_counts: Dict[str, int] = {}
 
         for file_path in supported_files:
             file_type = file_path.suffix.lower()

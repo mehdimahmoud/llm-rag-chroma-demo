@@ -22,10 +22,10 @@ class VectorStore:
 
     def __init__(
         self,
-        settings,
+        settings: Any,
         persist_directory: Optional[str] = None,
         collection_name: Optional[str] = None,
-        embedding_function=None,
+        embedding_function: Optional[Any] = None,
     ):
         """
         Initialize the vector store.
@@ -246,13 +246,13 @@ class VectorStore:
             collection = self.client.get_collection(name=self.collection_name)
             results = collection.get(include=["metadatas"])
 
-            sources = set()
+            sources: set[str] = set()
             if results["metadatas"]:
                 for metadata in results["metadatas"]:
                     if metadata and "source" in metadata:
-                        sources.add(metadata["source"])
+                        sources.add(str(metadata["source"]))
 
-            sources_list = list(sources)
+            sources_list: list[str] = list(sources)
             logger.info(
                 "Document sources retrieved",
                 source_count=len(sources_list),

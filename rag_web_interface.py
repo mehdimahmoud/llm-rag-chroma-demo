@@ -3,6 +3,7 @@ RAG System Web Interface
 
 A Streamlit web application for interacting with the RAG system,
 providing document ingestion, querying, and system monitoring.
+This is for local testing only.
 """
 
 from pathlib import Path

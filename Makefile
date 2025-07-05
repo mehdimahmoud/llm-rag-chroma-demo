@@ -15,6 +15,7 @@ help:
 	@echo "  lint         - Run linting checks (flake8)"
 	@echo "  format       - Format code (black + isort)"
 	@echo "  type-check   - Run type checking (mypy)"
+	@echo "  security-check - Run security checks (bandit)"
 	@echo "  check-all    - Run all code quality checks"
 	@echo ""
 	@echo "Testing:"
@@ -104,11 +105,18 @@ type-check:
 	mypy *.py rag_system/ tests/
 	@echo "✅ Type checking passed"
 
+security-check:
+	@echo "Running security checks..."
+	# Skip B101 (assert_used) as assert statements are standard and acceptable in test files
+	bandit -r *.py rag_system/ tests/ -f txt --skip B101
+	@echo "✅ Security checks passed"
+
 check-all:
 	$(MAKE) autoflake
 	$(MAKE) format
 	$(MAKE) lint
 	$(MAKE) type-check
+	$(MAKE) security-check
 	@echo "✅ All code quality checks passed"
 
 # Testing

@@ -110,9 +110,8 @@ SUPPORTED_FILE_TYPES=[".pdf", ".txt", ".docx", ".md", ".csv", ".xlsx"]
 CHUNK_SIZE=120
 CHUNK_OVERLAP=24
 # ChromaDB settings
-CHROMA_PERSIST_DIRECTORY=./chroma_db
-# avoid sending telemetry
-CHROMA_TELEMETRY_ENABLED=false 
+CHROMA_PERSIST_DIRECTORY=chroma_db
+CHROMA_TELEMETRY_ENABLED=false
 # Embedding model
 EMBEDDING_MODEL_NAME=all-MiniLM-L6-v2
 # Openai
@@ -315,7 +314,7 @@ logger.info("Processing document",
    ```bash
    export PRODUCTION=true
    export LOG_LEVEL=WARNING
-   export CHROMA_PERSIST_DIRECTORY=/data/chroma
+   export CHROMA_PERSIST_DIRECTORY=chroma_db
    ```
 
 2. **Install Production Dependencies**:

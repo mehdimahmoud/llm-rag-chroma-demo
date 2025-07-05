@@ -67,7 +67,7 @@ jobs:
         run: make test
 
       - name: Upload unit test results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: unit-test-results
           path: reports/unit-tests.xml
@@ -101,7 +101,7 @@ jobs:
         run: make test
 
       - name: Upload integration test results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: integration-test-results
           path: reports/integration-tests.xml
@@ -135,7 +135,7 @@ jobs:
         run: make test
 
       - name: Upload e2e test results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: e2e-test-results
           path: reports/e2e-tests.xml
@@ -169,13 +169,13 @@ jobs:
         run: make coverage
 
       - name: Upload coverage report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: coverage-report
           path: htmlcov/
 
       - name: Upload coverage XML
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: coverage-xml
           path: coverage.xml
@@ -217,7 +217,7 @@ jobs:
         run: make test
 
       - name: Upload performance results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: performance-results
           path: .benchmarks/

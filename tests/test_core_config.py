@@ -18,7 +18,7 @@ from rag_system.core.config import Settings
 class TestSettings:
     """Test cases for the Settings class."""
 
-    def test_default_settings(self, settings):
+    def test_default_settings(self, settings: Settings) -> None:
         """Test that default settings are correctly set."""
         assert settings.app_name == "RAG System"
         assert settings.app_version == "1.0.0"
@@ -34,7 +34,7 @@ class TestSettings:
         assert settings.chunk_size_threshold == 1000
         assert settings.log_level == "INFO"
 
-    def test_custom_settings(self):
+    def test_custom_settings(self) -> None:
         """Test that custom settings can be set."""
         with patch.dict(
             os.environ,
@@ -51,7 +51,7 @@ class TestSettings:
             assert settings.chunk_size == 500
             assert settings.log_level == "DEBUG"
 
-    def test_environment_variables(self):
+    def test_environment_variables(self) -> None:
         """Test that environment variables override defaults."""
         with patch.dict(
             os.environ,
@@ -69,7 +69,7 @@ class TestSettings:
             assert settings.chunk_size == 750
             assert settings.log_level == "WARNING"
 
-    def test_directory_creation(self, temp_dir):
+    def test_directory_creation(self, temp_dir: Path) -> None:
         """Test that directories are created automatically."""
         data_dir = temp_dir / "test_data"
         chroma_dir = temp_dir / "test_chroma"
@@ -84,33 +84,44 @@ class TestSettings:
             assert data_dir.exists()
             assert chroma_dir.exists()
 
-    def test_log_level_validation(self):
+    def test_log_level_validation(self) -> None:
         """Test that invalid log levels raise validation errors."""
         with pytest.raises(ValueError, match="Log level must be one of"):
             Settings(LOG_LEVEL="INVALID")  # type: ignore
 
-    def test_supported_file_types(self, settings):
+    def test_supported_file_types(self, settings: Settings) -> None:
         """Test that supported file types are correctly configured."""
         expected_types = [".pdf", ".txt", ".docx", ".md", ".csv", ".xlsx"]
-        assert all(ft in settings.supported_file_types for ft in expected_types)
+        for ft in expected_types:
+            assert ft in settings.supported_file_types
 
-    def test_optional_openai_key(self, blank_env_file):
-        """Test that OpenAI API key is optional, using a blank temp .env for isolation."""
+    def test_optional_openai_key(self, blank_env_file: Path) -> None:
+        """
+        Test that OpenAI API key is optional,
+        using a blank temp .env for isolation.
+        """
+
         class TestEnvSettings(Settings):
-            model_config = SettingsConfigDict(env_file=str(blank_env_file), populate_by_name=True, frozen=True)
+            openai_api_key: str | None = None
+            model_config = SettingsConfigDict(
+                env_file=str(blank_env_file),
+                populate_by_name=True,
+                frozen=True,
+            )
+
         with patch.dict(os.environ, {}, clear=True):
             settings = TestEnvSettings()
             assert settings.openai_api_key is None
         # Test with API key set explicitly
-        settings_with_key = TestEnvSettings(OPENAI_API_KEY="test-key")  # type: ignore
+        settings_with_key = TestEnvSettings(openai_api_key="test-key")
         assert settings_with_key.openai_api_key == "test-key"
 
-    def test_chroma_settings(self, settings):
+    def test_chroma_settings(self, settings: Settings) -> None:
         """Test ChromaDB-specific settings."""
         assert settings.chroma_persist_directory == Path("./chroma_db")
         assert settings.collection_name == "hr_policies"
 
-    def test_embedding_settings(self, settings):
+    def test_embedding_settings(self, settings: Settings) -> None:
         """Test embedding model settings."""
         assert settings.embedding_model_name == "all-MiniLM-L6-v2"
         assert settings.small_chunk_size == 300
@@ -119,19 +130,20 @@ class TestSettings:
         assert settings.large_chunk_overlap == 200
         assert settings.chunk_size_threshold == 1000
 
-    def test_ui_settings(self, settings):
+    def test_ui_settings(self, settings: Settings) -> None:
         """Test UI-related settings."""
         assert settings.streamlit_port == 8501
         assert settings.log_format == "text"
 
-    def test_settings_immutability(self, settings):
+    def test_settings_immutability(self, settings: Settings) -> None:
         """Test that settings are properly validated and immutable (frozen)."""
         from pydantic_core import ValidationError
+
         # Test that we can't set invalid values after creation
         with pytest.raises(ValidationError):
             settings.app_name = "New Name"
 
-    def test_settings_repr(self, settings):
+    def test_settings_repr(self, settings: Settings) -> None:
         """Test that settings have a proper string representation."""
         repr_str = repr(settings)
 
@@ -139,30 +151,38 @@ class TestSettings:
         assert "app_name" in repr_str
         assert "RAG System" in repr_str
 
-    def test_document_source(self, settings):
+    def test_document_source(self, settings: Settings) -> None:
         """Test that document source is correctly set."""
-        documents = [
-            {"metadata": {"source": str(settings.data_directory / "test.txt")}}
-        ]
-        assert documents[0]["metadata"]["source"] == str(
-            settings.data_directory / "test.txt"
-        )
+        test_file_path = str(settings.data_directory / "test.txt")
+        documents = [{"metadata": {"source": test_file_path}}]
+        expected_source = str(settings.data_directory / "test.txt")
+        assert documents[0]["metadata"]["source"] == expected_source
 
-    def test_env_to_settings_mapping(self, test_env_file, monkeypatch):
+    def test_env_to_settings_mapping(
+        self, test_env_file: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
         """Test that all .env variables are mapped to Settings fields."""
         monkeypatch.chdir(test_env_file.parent)
-        
+
         # Clear environment variables to ensure test.env file is used
-        for var in ["APP_NAME", "LOG_LEVEL", "CHUNK_SIZE", "CHUNK_OVERLAP", "CHROMA_PERSIST_DIRECTORY", 
-                   "CHROMA_TELEMETRY_ENABLED", "EMBEDDING_MODEL_NAME", "OPENAI_API_KEY", "OPENAI_MODEL_NAME"]:
+        for var in [
+            "APP_NAME",
+            "LOG_LEVEL",
+            "CHUNK_SIZE",
+            "CHUNK_OVERLAP",
+            "CHROMA_PERSIST_DIRECTORY",
+            "CHROMA_TELEMETRY_ENABLED",
+            "EMBEDDING_MODEL_NAME",
+            "OPENAI_API_KEY",
+            "OPENAI_MODEL_NAME",
+        ]:
             monkeypatch.delenv(var, raising=False)
-        
+
         class TestEnvSettings(Settings):
             model_config = SettingsConfigDict(
-                env_file=str(test_env_file), 
-                populate_by_name=True, 
-                frozen=True
+                env_file=str(test_env_file), populate_by_name=True, frozen=True
             )
+
         TestEnvSettings.model_rebuild(force=True)
         settings = TestEnvSettings()
         assert settings.app_name == "TestApp"

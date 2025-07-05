@@ -172,18 +172,18 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
-          path: htmlcov/
+          path: tests/htmlcov/
 
       - name: Upload coverage XML
         uses: actions/upload-artifact@v4
         with:
           name: coverage-xml
-          path: coverage.xml
+          path: tests/coverage.xml
 
       - name: Publish coverage to Codecov
         uses: codecov/codecov-action@v3
         with:
-          file: ./coverage.xml
+          file: tests/coverage.xml
           flags: unittests
           name: codecov-umbrella
           fail_ci_if_error: true

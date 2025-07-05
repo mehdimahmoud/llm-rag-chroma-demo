@@ -79,7 +79,7 @@ exclude = '''
   | .pytest_cache
   | chroma_db
   | rag_cache
-  | htmlcov
+  | tests/htmlcov
   | __pycache__
   | .coverage
   | coverage.xml
@@ -93,11 +93,11 @@ profile = "black"
 multi_line_output = 3
 line_length = 88
 known_first_party = ["rag_system"]
-skip = [".venv*", "venv*", "build", "dist", ".mypy_cache", ".pytest_cache", "chroma_db", "rag_cache", "htmlcov", "__pycache__"]
+skip = [".venv*", "venv*", "build", "dist", ".mypy_cache", ".pytest_cache", "chroma_db", "rag_cache", "tests/htmlcov", "__pycache__"]
 
 [tool.mypy]
 python_version = "3.12"
-exclude = "(venv.*|\\.venv.*|build|dist|\\.mypy_cache|\\.pytest_cache|chroma_db|rag_cache|htmlcov|__pycache__|\\.coverage|coverage.xml|\\.streamlit|rag_system/.*\\.egg-info)"
+exclude = "(venv.*|\\.venv.*|build|dist|\\.mypy_cache|\\.pytest_cache|chroma_db|rag_cache|tests/htmlcov|__pycache__|\\.coverage|coverage.xml|\\.streamlit|rag_system/.*\\.egg-info)"
 warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = true
@@ -146,6 +146,6 @@ exclude_lines = [
     "raise NotImplementedError",
     "if 0:",
     "if __name__ == .__main__.:",
-    "class .*\\\\bProtocol\\\\):",
-    "@(abc\\\\.)?abstractmethod",
+    "class .*\\bProtocol\\)\\:",
+    "@(abc\\.)?abstractmethod",
 ] 

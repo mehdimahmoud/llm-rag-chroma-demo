@@ -46,16 +46,16 @@ install-dev:
 	@echo "Installing development dependencies..."
 	pip install -e ".[dev]"
 
-clean:	clean-env
+clean: clean-env
 	@echo "Cleaning build artifacts..."
 	rm -rf build/
 	rm -rf dist/
 	rm -rf *.egg-info/
 	rm -rf .pytest_cache/
 	rm -rf .mypy_cache/
-	rm -rf htmlcov/
+	rm -rf tests/htmlcov/
+	rm -rf tests/coverage.xml
 	rm -rf .coverage
-	rm -rf coverage.xml
 	rm -rf .streamlit/
 	rm -rf chroma_db/
 	rm -rf rag_cache/
@@ -127,6 +127,10 @@ test:
 test-cov:
 	@echo "Running tests with coverage..."
 	pytest tests/ -v --cov=rag_system --cov-report=term-missing --cov-report=html
+
+coverage:
+	@echo "Running tests and generating coverage.xml in tests/..."
+	pytest tests/ -v --cov=rag_system --cov-report=xml:tests/coverage.xml --cov-report=html:tests/htmlcov
 
 test-watch:
 	@echo "Running tests in watch mode..."

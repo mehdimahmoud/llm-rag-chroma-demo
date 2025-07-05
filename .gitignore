@@ -91,7 +91,7 @@ models/
 .dockerignore
 
 # Coverage reports
-htmlcov/
+tests/htmlcov/
 .tox/
 .nox/
 .coverage

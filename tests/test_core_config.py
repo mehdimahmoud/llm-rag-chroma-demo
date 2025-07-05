@@ -118,7 +118,7 @@ class TestSettings:
 
     def test_chroma_settings(self, settings: Settings) -> None:
         """Test ChromaDB-specific settings."""
-        assert settings.chroma_persist_directory == Path("./chroma_db")
+        assert settings.chroma_persist_directory == Path("chroma_db")
         assert settings.collection_name == "hr_policies"
 
     def test_embedding_settings(self, settings: Settings) -> None:

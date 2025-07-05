@@ -35,7 +35,7 @@ class Settings(BaseSettings):
     # Vector store settings
     chroma_persist_directory: Annotated[
         Path, Field(alias="CHROMA_PERSIST_DIRECTORY")
-    ] = Path("chroma")
+    ] = Path("chroma_db")
     chroma_telemetry_enabled: Annotated[
         bool, Field(alias="CHROMA_TELEMETRY_ENABLED")
     ] = True

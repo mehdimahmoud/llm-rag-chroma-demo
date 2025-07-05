@@ -7,7 +7,7 @@ on:
     branches: [ main, develop ]
 
 env:
-  PYTHON_VERSION: "3.9"
+  PYTHON_VERSION: "3.12"
   COVERAGE_THRESHOLD: 80
 
 jobs:
@@ -35,14 +35,8 @@ jobs:
       - name: Install dependencies
         run: make install-dev
 
-      - name: Run linting
-        run: make lint
-
-      - name: Run type checking
-        run: make type-check
-
-      - name: Run security checks
-        run: make security-check
+      - name: Run comprehensive quality checks
+        run: make check-all
 
   # Unit Tests
   unit-tests:

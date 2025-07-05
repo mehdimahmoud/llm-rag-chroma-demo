@@ -1,6 +1,6 @@
 # RAG System
 
-[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Imports: isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://pycqa.github.io/isort/)
@@ -32,13 +32,13 @@ A production-ready **Retrieval-Augmented Generation (RAG)** system built with La
 - **Embedding Generation**: Sentence Transformers with customizable models
 - **Dual Interface**: Command-line and Streamlit web UI
 - **Structured Logging**: Logging with correlation IDs
-- **Type Safety**: Full type hints and MyPy integration
-- **Testing**: Comprehensive test suite with 80%+ coverage
-- **Code Quality**: Black, isort, flake8, and pre-commit hooks
+- **Type Safety**: Comprehensive type hints with MyPy integration
+- **Testing**: Comprehensive test suite with enterprise-grade fixtures
+- **Code Quality**: Black, isort, flake8, autoflake, and bandit security scanning
 
 ## 📋 Requirements
 
-- Python 3.8+ (recommended: Python 3.9 or 3.10 for best compatibility)
+- **Python 3.12+** (required - the project uses Python 3.12 features)
 - CUDA-compatible GPU (optional, for faster embedding generation)
 
 ## 🛠️ Installation
@@ -50,21 +50,19 @@ A production-ready **Retrieval-Augmented Generation (RAG)** system built with La
 git clone <repository-url>
 cd llm-rag-chroma-demo
 
-# 2. Create virtual environment with Python 3.8+
-python3.8 -m venv venv38  # For Python 3.8
+# 2. Create virtual environment with Python 3.12
+python3.12 -m venv venv312  # For Python 3.12 (required)
 # OR
-python3.9 -m venv venv39  # For Python 3.9 (recommended)
-# OR
-python3.10 -m venv venv310 # For Python 3.10
-# OR
-python3.12 -m venv venv # For Python 3.12
-# OR
-python -m venv venv  # Uses your default Python (3.8+)
+python -m venv venv  # Uses your default Python (must be 3.12+)
 
 # 3. Activate virtual environment that you have created above
-source venv/bin/activate  # On Linux/Mac
+source venv312/bin/activate  # On Linux/Mac (if using venv312)
 # OR
-venv\Scripts\activate     # On Windows
+source venv/bin/activate     # On Linux/Mac (if using venv)
+# OR
+venv312\Scripts\activate     # On Windows (if using venv312)
+# OR
+venv\Scripts\activate        # On Windows (if using venv)
 
 # 4. Install dependencies
 make install-dev
@@ -79,7 +77,7 @@ make info
 # Navigate to your existing project directory
 cd llm-rag-chroma-demo
 
-# Activate your existing virtual environment
+# Activate your existing virtual environment (must be Python 3.12+)
 source venv/bin/activate  # On Linux/Mac
 # OR
 venv\Scripts\activate     # On Windows
@@ -228,24 +226,51 @@ make test-watch
 
 # Quick test cycle (format + lint + test)
 make quick-test
+
+# Run specific test file
+pytest tests/test_ingestion.py -v
+
+# Run tests with specific marker
+pytest -m "slow" -v
 ```
 
 ## 🔧 Development
 
+### Code Quality and Type Safety
+
+This project maintains enterprise-grade code quality with:
+
+- **Comprehensive Type Annotations**: All functions, methods, and variables have type hints
+- **Static Type Checking**: MyPy integration ensures type safety across the codebase
+- **Code Formatting**: Black and isort ensure consistent code style
+- **Linting**: Flake8 and autoflake maintain code quality
+- **Security Scanning**: Bandit identifies potential security issues
+- **Testing**: Comprehensive test suite with clean fixtures
+
 ### Code Quality
 
 ```bash
-# Format code
+# Format code (black + isort)
 make format
 
-# Run linting
+# Run linting (flake8 + autoflake)
 make lint
 
-# Type checking
+# Type checking (mypy)
 make type-check
+
+# Security scanning (bandit)
+make security-check
 
 # All quality checks
 make check-all
+
+# Clean unused imports and variables
+make clean-imports
+
+# Pre-commit validation (runs automatically on staged files)
+# The custom pre-commit hook runs the same tools as make check-all
+# but only on staged files during git commit
 ```
 
 ### Development Workflow
@@ -331,7 +356,11 @@ We welcome contributions! Please see our [CONTRIBUTING.md](CONTRIBUTING.md) for 
 - Use PascalCase for classes
 - Write comprehensive docstrings
 - Maintain 80%+ test coverage
-- Follow type hints throughout
+- **Follow comprehensive type hints throughout**
+- **Raise exceptions rather than returning error strings**
+- **Never commit `.env` files** - use `.env.default` as template
+- **Run `make check-all` before committing**
+- **Pre-commit hooks run automatically** on staged files during commit
 
 ## 📝 License
 

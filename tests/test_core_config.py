@@ -189,7 +189,7 @@ class TestSettings:
         assert settings.log_level == "DEBUG"
         assert settings.chunk_size == 123
         assert settings.chunk_overlap == 7
-        assert settings.chroma_persist_directory == Path("./test_chroma")
+        assert settings.chroma_persist_directory == Path("./tests/test_chroma")
         assert settings.chroma_telemetry_enabled is True
         assert settings.embedding_model_name == "all-MiniLM-L6-v2"
         assert settings.openai_api_key == "test-key"

@@ -234,7 +234,7 @@ def test_env_file(temp_dir: Any) -> Any:
     LOG_LEVEL=DEBUG
     CHUNK_SIZE=123
     CHUNK_OVERLAP=7
-    CHROMA_PERSIST_DIRECTORY=./test_chroma
+    CHROMA_PERSIST_DIRECTORY=./tests/test_chroma
     CHROMA_TELEMETRY_ENABLED=true
     EMBEDDING_MODEL_NAME=all-MiniLM-L6-v2
     OPENAI_API_KEY=test-key

@@ -137,42 +137,48 @@ make install-dev
 
 ## ⚙️ Configuration
 
-**Configuration is optional** - the system works with default settings. You can configure it anytime after installation:
+The project is designed to work out-of-the-box with sensible defaults. Configuration is managed via environment variables, which you can set up using a `.env` file.
 
-### Environment Variables
+### 1. Start with the Default Configuration
 
-Create a `.env` file in the project root by copying the template:
+A template file, `.env.default`, is provided in the project root. To get started, copy this file to `.env`:
 
 ```bash
 cp .env.default .env
 ```
 
-Then edit the `.env` file to set your actual values, especially the OpenAI API key:
+You can then edit `.env` to customize your settings as needed.
 
-```env
-# Project settings
-APP_NAME=RAG System
-# Logging
-LOG_LEVEL=INFO
-# Langchain settings
-SUPPORTED_FILE_TYPES=[".pdf", ".txt", ".docx", ".md", ".csv", ".xlsx"]
-CHUNK_SIZE=120
-CHUNK_OVERLAP=24
-# ChromaDB settings
-CHROMA_PERSIST_DIRECTORY=chroma_db
-CHROMA_TELEMETRY_ENABLED=false
-# Embedding model
-EMBEDDING_MODEL_NAME=all-MiniLM-L6-v2
-# Openai
-OPENAI_API_KEY="your actual openai api key here"
-OPENAI_MODEL_NAME="gpt-4o-mini"
+### 2. OpenAI API Key (Optional)
+
+- The project will run **with or without** an OpenAI API key.
+
+**With an OpenAI API Key:**  
+If you provide an OpenAI API key, the system can combine your enterprise's private or customer documents with powerful LLMs (like OpenAI) to deliver richer, more accurate, and context-aware responses. This enables advanced inference by leveraging both your internal knowledge base and state-of-the-art language models.
+
+**Without an OpenAI API Key:**  
+If you do **not** provide an OpenAI API key, the RAG system will still function as a robust query engine over your embedded document store. In this mode, responses are generated purely from your indexed documents, without LLM-powered augmentation. This is suitable for environments where external API calls are restricted or not desired, but may result in less nuanced or generative answers.
+
+To use an OpenAI API key, add it to your `.env` file:
+```
+OPENAI_API_KEY=your-openai-api-key
 ```
 
-> **Note:** If you want to fully reset your environment variables in your current shell, run:
-> ```bash
-> source clean-env.sh
-> ```
-> This ensures no old or conflicting variables interfere with your run.
+### 3. Other Configuration Options
+
+You can further customize the system by editing other variables in your `.env` file, such as:
+- Logging level
+- Supported file types
+- Chunk size and overlap
+- ChromaDB settings
+- Embedding model
+
+All available options are documented in `.env.default` with comments.
+
+**Summary:**
+- Copy `.env.default` to `.env` and edit as needed.
+- OpenAI API key is optional, but recommended for best inference quality.
+- The project works out-of-the-box with default settings.
 
 ## 🎯 Usage
 

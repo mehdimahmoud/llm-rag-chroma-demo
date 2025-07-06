@@ -1,11 +1,60 @@
 # RAG System
 
-[![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
-[![Imports: isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://pycqa.github.io/isort/)
+<p align="center">
+  <!-- Runtime & License -->
+  <a href="https://www.python.org/downloads/">
+    <img src="https://img.shields.io/badge/python-3.12+-blue.svg" alt="Python 3.12+">
+  </a>
+  <a href="https://opensource.org/licenses/MIT">
+    <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="MIT License">
+  </a>
+</p>
 
-A production-ready **Retrieval-Augmented Generation (RAG)** system built with LangChain and ChromaDB.
+<p align="center">
+  <!-- CI/CD & Coverage -->
+  <a href="https://github.com/mehdimahmoud/llm-rag-chroma-demo/actions/workflows/ci.yml">
+    <img src="https://github.com/mehdimahmoud/llm-rag-chroma-demo/actions/workflows/ci.yml/badge.svg" alt="CI Status">
+  </a>
+  <a href="https://codecov.io/gh/mehdimahmoud/llm-rag-chroma-demo">
+    <img src="https://codecov.io/gh/mehdimahmoud/llm-rag-chroma-demo/branch/main/graph/badge.svg" alt="Code Coverage">
+  </a>
+</p>
+
+<p align="center">
+  <!-- Code Quality & Security -->
+  <a href="https://flake8.pycqa.org/">
+    <img src="https://img.shields.io/badge/lint-flake8-blueviolet" alt="flake8">
+  </a>
+  <a href="http://mypy-lang.org/">
+    <img src="https://img.shields.io/badge/type--checking-mypy-blue" alt="mypy">
+  </a>
+  <a href="https://bandit.readthedocs.io/">
+    <img src="https://img.shields.io/badge/security-bandit-yellowgreen" alt="bandit">
+  </a>
+  <a href="https://github.com/psf/black">
+    <img src="https://img.shields.io/badge/code%20style-black-000000.svg" alt="black">
+  </a>
+  <a href="https://pycqa.github.io/isort/">
+    <img src="https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336" alt="isort">
+  </a>
+  <a href="https://github.com/PyCQA/autoflake">
+    <img src="https://img.shields.io/badge/cleanup-autoflake-lightgrey" alt="autoflake">
+  </a>
+</p>
+
+<p align="center">
+  <!-- Tech Stack -->
+  <a href="https://github.com/langchain-ai/langchain">
+    <img src="https://img.shields.io/badge/LangChain-🦜-green" alt="LangChain">
+  </a>
+  <a href="https://github.com/chroma-core/chroma">
+    <img src="https://img.shields.io/badge/ChromaDB-DB-blueviolet" alt="ChromaDB">
+  </a>
+</p>
+
+A robust, production-quality **Retrieval-Augmented Generation (RAG)** system template built with LangChain and ChromaDB.
+
+Suitable for local use, internal enterprise deployments, or as a foundation for building scalable, production-ready RAG applications. While not yet a fully production-hardened or scalable solution, it demonstrates enterprise-level best practices in code quality, testing, and extensibility.
 
 ## 📚 Table of Contents
 

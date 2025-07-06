@@ -56,6 +56,11 @@ A robust, production-quality **Retrieval-Augmented Generation (RAG)** system tem
 
 Suitable for local use, internal enterprise deployments, or as a foundation for building scalable, production-ready RAG applications. While not yet a fully production-hardened or scalable solution, it demonstrates enterprise-level best practices in code quality, testing, and extensibility.
 
+<p align="center">
+  <img src="docs/assets/run-ui-2.gif" alt="Web UI Demo" width="800"/>
+</p>
+<p align="center"><b>Demo: Web UI in Action</b></p>
+
 ## 📚 Table of Contents
 
 - [Features](#-features)
@@ -191,6 +196,14 @@ make run-demo
 # Or start the web interface
 make run-ui
 ```
+
+### Demo: Running `make run-demo`
+
+Below is a demonstration of how to run the demo and what output to expect:
+
+<p align="center">
+  <img src="docs/assets/run-demo-2.gif" alt="Demo output: make run-demo" width="700"/>
+</p>
 
 ### Command Line Interface
 
@@ -431,9 +444,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 For support and questions:
 
-- Create an [issue](https://github.com/your-repo/issues)
+- Create an [issue](https://github.com/mehdimahmoud/llm-rag-chroma-demo/issues)
 - Check the [documentation](docs/)
-- Review the [examples](examples/)
+- Review the [examples](docs/EXAMPLES.md)
 
 ---
 

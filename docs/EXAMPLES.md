@@ -2,10 +2,12 @@
 
 ## Document-Specific Example Pages
 
-- [UKRI HR Policy Framework Example Questions](UKRI_EXAMPLES.md)
-- [Engineering Department HR Policy Example Questions](ENGINEERING_HR_EXAMPLES.md)
-- [Generic Company HR Policy Example Questions](GENERIC_HR_EXAMPLES.md)
-- [HR Guide: Policy and Procedure Template Example Questions](HR_GUIDE_POLICY_EXAMPLES.md)
+| **Data Document**                                                                 | **Example Questions**                                                                                  |
+|-----------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------|
+| [UKRI-081020-HRPolicyFramework.pdf](../data/hr_policy/UKRI-081020-HRPolicyFramework.pdf)         | [UKRI HR Policy Framework Example Questions](EXAMPLE_UKRI.md)                                         |
+| [hr_policy_engineering.pdf](../data/hr_policy/hr_policy_engineering.pdf)          | [Engineering Department HR Policy Example Questions](EXAMPLE_ENGINEERING_HR.md)                        |
+| [hr_policy_generic.txt](../data/hr_policy/hr_policy_generic.txt)                  | [Generic Company HR Policy Example Questions](EXAMPLE_GENERIC_HR.md)                                   |
+| [HR-Guide_-Policy-and-Procedure-Template.pdf](../data/hr_policy/HR-Guide_-Policy-and-Procedure-Template.pdf) | [HR Guide: Policy and Procedure Template Example Questions](EXAMPLE_HR_GUIDE_POLICY.md)                |
 
 ---
 

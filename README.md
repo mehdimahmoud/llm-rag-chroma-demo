@@ -5,8 +5,8 @@
   <a href="https://www.python.org/downloads/">
     <img src="https://img.shields.io/badge/python-3.12+-blue.svg" alt="Python 3.12+">
   </a>
-  <a href="https://opensource.org/licenses/MIT">
-    <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="MIT License">
+  <a href="https://www.gnu.org/licenses/gpl-3.0">
+    <img src="https://img.shields.io/badge/License-GPL%20v3-blue.svg" alt="GPL v3 License">
   </a>
 </p>
 
@@ -437,7 +437,7 @@ We welcome contributions! Please see our [CONTRIBUTING.md](CONTRIBUTING.md) for 
 
 ## 📝 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the GNU General Public License v3 - see the [LICENSE](LICENSE) file for details.
 
 ## 🙏 Acknowledgments
 

@@ -83,6 +83,7 @@ Suitable for local use, internal enterprise deployments, or as a foundation for 
 - [License](#-license)
 - [Acknowledgments](#-acknowledgments)
 - [Support](#-support)
+- [Consultation](#-consultation)
 
 ## 🚀 Features
 
@@ -454,7 +455,7 @@ For support and questions:
 - Check the [documentation](docs/)
 - Review the [examples](docs/EXAMPLES.md)
 
-## 💼 Support & Consultation
+## 💼 Consultation
 
 Need help implementing this RAG system in your organization? I offer:
 

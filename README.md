@@ -50,6 +50,12 @@
   <a href="https://github.com/chroma-core/chroma">
     <img src="https://img.shields.io/badge/ChromaDB-DB-blueviolet" alt="ChromaDB">
   </a>
+  <a href="https://huggingface.co/">
+    <img src="https://img.shields.io/badge/Hugging%20Face-Model-yellow" alt="Hugging Face">
+  </a>
+  <a href="https://www.sbert.net/">
+    <img src="https://img.shields.io/badge/Sentence%20Transformers-Embeddings-orange" alt="Sentence Transformers">
+  </a>
 </p>
 
 A robust, production-quality **Retrieval-Augmented Generation (RAG)** system template built with LangChain and ChromaDB.
@@ -83,7 +89,7 @@ Suitable for local use, internal enterprise deployments, or as a foundation for 
 - **Multi-format Document Support**: PDF, TXT, DOCX, MD, CSV, XLSX
 - **Advanced Text Processing**: Intelligent chunking with configurable overlap
 - **Vector Storage**: ChromaDB integration with persistent storage
-- **Embedding Generation**: Sentence Transformers with customizable models
+- **Embedding Generation**: Sentence Transformers models via Hugging Face with customizable model selection
 - **Dual Interface**: Command-line and Streamlit web UI
 - **Structured Logging**: Logging with correlation IDs
 - **Type Safety**: Comprehensive type hints with MyPy integration
@@ -437,7 +443,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - [LangChain](https://github.com/langchain-ai/langchain) for the RAG framework
 - [ChromaDB](https://github.com/chroma-core/chroma) for vector storage
-- [Sentence Transformers](https://github.com/UKPLab/sentence-transformers) for embeddings
+- [Sentence Transformers](https://github.com/UKPLab/sentence-transformers) for embeddings via [Hugging Face](https://huggingface.co/)
 - [Streamlit](https://streamlit.io/) for the web interface
 
 ## 📞 Support
@@ -447,6 +453,18 @@ For support and questions:
 - Create an [issue](https://github.com/mehdimahmoud/llm-rag-chroma-demo/issues)
 - Check the [documentation](docs/)
 - Review the [examples](docs/EXAMPLES.md)
+
+## 💼 Support & Consultation
+
+Need help implementing this RAG system in your organization? I offer:
+
+- **Custom RAG Solutions**: Tailored implementations for your specific use case
+- **Architecture Review**: Optimize your AI/ML infrastructure design
+- **Production Deployment**: From prototype to production-ready systems
+- **Team Training**: Workshops on RAG systems and best practices
+- **Ongoing Support**: Maintenance, optimization, and feature development
+
+**Ready to accelerate your AI initiatives?** [Book a consultation](https://topmate.io/mehdi_khoder) to discuss your project requirements.
 
 ---
 
